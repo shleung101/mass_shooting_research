@@ -1,6 +1,6 @@
 # Mass Shooting Research
 
-Tableau: 
+Tableau Viz: https://public.tableau.com/views/Mass_Shootings/Dashboard3?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link
 
 ### SQL Skills
 * Joins 

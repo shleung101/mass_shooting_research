@@ -1,5 +1,13 @@
 # Mass Shooting Research
 
+Tableau: 
+
+### SQL Skills
+* Joins 
+* CTE
+* Temp Tables
+* Windows Function
+
 
 ### Things I Learned
 

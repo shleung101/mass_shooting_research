@@ -1,0 +1,22 @@
+-- MOTHER JONES, TVP JOIN 
+
+-- JOIN BY DATE, NUM KILLED, NUM INJURED 
+
+-- ALTER TABLE "Mother_Jones"
+-- DROP COLUMN race
+
+-- SPLIT LOCATION...2 INTO CITY AND STATE (TEST)
+
+SELECT * FROM "TVP" tvp
+LEFT JOIN
+(SELECT * FROM
+	(	SELECT 
+			SPLIT_PART("location...2", ',', 1) city,
+			SPLIT_PART("location...2", ', ', 2) "state" , *
+		FROM "Mother_Jones"
+	) aa
+) mj
+ON mj."year" = tvp."Year"
+	AND mj.city = tvp."City"
+WHERE tvp."Year" >= 1982
+

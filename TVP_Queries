@@ -1,0 +1,155 @@
+-- DATA CLEANING AND EXPLORATION
+-- DATABASE: THE VIOLENCE PROJECT
+
+SELECT *
+FROM "TVP"
+WHERE "Year" >= 1982
+		
+
+SELECT *
+FROM "TVP"
+WHERE "Gender" IS NULL 
+
+-- Removed case 145,146 where gender was null (data incomplete for other fields as well )
+DELETE FROM "TVP" WHERE "Gender" IS NULL 
+
+-- Majority of shooter are male (174:4)
+SELECT "Gender", COUNT("Gender")
+FROM "TVP"
+GROUP BY "Gender";
+
+
+-- Majority of shooters are White
+SELECT "Race", COUNT("Race")
+FROM "TVP"
+WHERE "Year" >= 1982 AND "Race" IS NOT NULL
+GROUP BY "Race"
+ORDER BY "Race";
+
+
+-- Percent breakdown of race 
+SELECT "Race",
+		   COUNT(*) * 100.0 /SUM(COUNT(*)) OVER() AS "Percent Racial Breakdown"
+FROM "TVP"
+WHERE "Year" >= 1982 AND "Race" IS NOT NULL
+GROUP BY "Race"
+ORDER BY "Race"
+
+
+-- Find avg days since previous shooting while grouping by urban/suburban/rural 
+-- First Window Function!!! but not what I expected. Want 3 rows for each region, gave avg for all entries
+SELECT "Urban/Suburban/Rural",
+	AVG(CAST("Days since previous shooting" AS INTEGER)) OVER(PARTITION BY "Urban/Suburban/Rural") AS "Avg days btwn shootings"
+	FROM "TVP"
+	WHERE "Year" >= 1982
+	
+
+-- Much better!!
+SELECT  "Urban/Suburban/Rural", 
+			AVG(CAST("Days since previous shooting" AS INTEGER)) AS "Avg days btwn shootings"
+	FROM "TVP"
+	WHERE "Year" >= 1982
+	GROUP BY "Urban/Suburban/Rural";
+
+
+-- Cumulative count of how many people injured or fatally killed in mass shootings
+-- Note: Significant increase in Cum Num Injured from Las Vegas Hotel Shooting
+
+SELECT "Shooter First Name", 
+	   	"Shooter Last Name",
+	   	"Full Date", 		
+		"Number Killed", 
+		SUM("Number Killed") OVER(ORDER BY "Full Date") AS "Cumulative Num Killed",
+		"Number Injured",
+		SUM("Number Injured") OVER(ORDER BY "Full Date") AS "Cumulative Num Injured"
+FROM "TVP"
+WHERE "Year" >= 1982;
+
+-- Childhood vs Adult Trauma/Crisis
+-- column for Childhood Problems, Adult Problems: 0 if no, 1 if yes
+-- if column not 0 --> has trauma, else does not have recorded trauma
+-- FIRST CTE!!!
+
+
+WITH cte_trauma AS ( 
+
+	SELECT 
+		"Shooter First Name", "Shooter Last Name",
+		"Bullied", "Raised by Single Parent", 
+		"Parental Suicide", "Childhood Trauma", 
+		"Adult Trauma", "Recent Breakup",
+		"Recent Employment Change or Trouble",
+		CASE 
+			WHEN "Bullied" <> 0 OR "Raised by Single Parent" <> 0 OR "Parental Suicide" <> 0 OR "Childhood Trauma" <> 0
+			THEN 1
+			ELSE 0
+		END AS "Childhood Problems",
+
+		CASE 
+			WHEN "Adult Trauma" <> 0 OR CAST("Recent Breakup" AS INTEGER)<> 0 OR "Recent Employment Change or Trouble" <> 0
+			THEN 1
+			ELSE 0
+		END AS "Adult Problems"
+
+-- ONLY INCLUDE ENTRIES THAT HAVE AT LEAST 1 DATA POINT WITHIN THESE COLUMNS
+	FROM "TVP"
+	WHERE "Year" >= 1982
+		AND NOT ("Bullied" IS NULL 
+		AND "Raised by Single Parent" IS NULL
+		AND "Parental Suicide" IS NULL
+		AND "Childhood Trauma" IS NULL 
+		AND "Adult Trauma" IS NULL
+		AND "Recent Breakup" IS NULL
+		AND "Recent Employment Change or Trouble" IS NULL) 
+)
+
+-- SHOW PERCENT OF SHOOTERS WITH CHILDHOOD PROBLEMS
+SELECT "Childhood Problems", 
+		COUNT("Childhood Problems")*100 / SUM(COUNT(*)) 
+			OVER() AS "Percent Childhood Problems"
+	FROM cte_trauma
+	GROUP BY "Childhood Problems"
+	
+
+-- CREATE TEMP TABLE trauma_temp, PERCENT ADULT TRAUMA
+
+SELECT 
+		"Shooter First Name", "Shooter Last Name",
+		"Bullied", "Raised by Single Parent", 
+		"Parental Suicide", "Childhood Trauma", 
+		"Adult Trauma", "Recent Breakup",
+		"Recent Employment Change or Trouble",
+		CASE 
+			WHEN "Bullied" <> 0 OR "Raised by Single Parent" <> 0 OR "Parental Suicide" <> 0 OR "Childhood Trauma" <> 0
+			THEN 1
+			ELSE 0
+		END AS "Childhood Problems",
+
+		CASE 
+			WHEN "Adult Trauma" <> 0 OR CAST("Recent Breakup" AS INTEGER)<> 0 OR "Recent Employment Change or Trouble" <> 0
+			THEN 1
+			ELSE 0
+		END AS "Adult Problems"
+		
+INTO trauma_temp
+
+FROM "TVP"
+	WHERE "Year" >= 1982
+		AND NOT ("Bullied" IS NULL 
+		AND "Raised by Single Parent" IS NULL
+		AND "Parental Suicide" IS NULL
+		AND "Childhood Trauma" IS NULL 
+		AND "Adult Trauma" IS NULL
+		AND "Recent Breakup" IS NULL
+		AND "Recent Employment Change or Trouble" IS NULL) 
+		
+
+-- RETURNS PERCENT OF ENTRIES WITH ADULT PROBLEMS
+SELECT "Adult Problems",
+		COUNT("Adult Problems")*100 / SUM(COUNT(*)) 
+			OVER() AS "Percent Adult Problems"
+	FROM trauma_temp
+	GROUP BY "Adult Problems"
+
+
+

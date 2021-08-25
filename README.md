@@ -1,6 +1,10 @@
 # Mass Shooting Research
 
+
+
 Tableau Public: [Mass Shootings Data Viz](https://public.tableau.com/views/Mass_Shootings/Dashboard3?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link)
+
+Data: [The Violence Project](https://www.theviolenceproject.org/) & [Mother Jones](https://www.motherjones.com/politics/2012/12/mass-shootings-mother-jones-full-data/)
 
 ### SQL Skills
 * Joins 

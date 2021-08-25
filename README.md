@@ -1,5 +1,10 @@
 # Mass Shooting Research
 
+The Mass Shooting Research Project was created to provide insight from data related to mass shootings. There is no standard definition for the term “mass shooting,” but this phrase is commonly used by media outlets, researchers, and law enforcement agencies. To be specific, this project will follow the Congressional Research Service definition: 
+
+*“... a multiple homicide incident in which four or more victims are murdered with firearms, within one event, and in one or more locations in close proximity.”*
+
+In other words, mass shooting under this definition will consist of four or more casualties due to firearms within one event not including the offender. This definition leans on the conservative side, so it is important to note that there are numerous cases of gun violence that are included in this dataset. 
 
 
 Tableau Public: [Mass Shootings Data Viz](https://public.tableau.com/views/Mass_Shootings/Dashboard3?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link)

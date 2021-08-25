@@ -11,7 +11,7 @@ Tableau Public: [Mass Shootings Data Viz](https://public.tableau.com/views/Mass_
 
 Data: [The Violence Project](https://www.theviolenceproject.org/) & [Mother Jones](https://www.motherjones.com/politics/2012/12/mass-shootings-mother-jones-full-data/)
 
-### SQL Skills
+### SQL Skills Used
 * Joins 
 * CTE
 * Temp Tables
